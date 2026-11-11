@@ -1,0 +1,3 @@
+---
+sudo_username: ansible
+sudo_shell: /bin/bash

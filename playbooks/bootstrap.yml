@@ -1,0 +1,9 @@
+---
+- name: Installing Tailscale VPN
+  hosts: domainesia
+  roles:
+    - role: artis3n.tailscale.machine
+      vars:
+        tailscale_authkey: "{{ vault_tailscale_authkey }}"
+        tailscale_args: "--accept-dns=true"
+      become: true

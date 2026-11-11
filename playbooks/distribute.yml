@@ -1,0 +1,6 @@
+---
+- name: Distribute ansible's public key
+  hosts: domainesia
+  remote_user: root
+  roles:
+    - role: sudo_user

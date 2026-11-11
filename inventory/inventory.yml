@@ -1,0 +1,6 @@
+---
+all:
+  children:
+    domainesia:
+      hosts:
+        domainesia-devops:

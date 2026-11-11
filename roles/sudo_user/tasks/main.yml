@@ -1,0 +1,35 @@
+---
+- name: Assert sudo username was given
+  ansible.builtin.assert:
+    that: sudo_username | default('') | trim | length > 0 
+    fail_msg: "sudo_username must be set to the account to create"
+
+- name: Assert ansible public key exist on control machine
+  ansible.builtin.assert:
+    that: ansible_pubkey_file is file
+    fail_msg: "{{ ansible_pubkey_file }} is missing. scripts/geninstall_key.sh creates it on its first run."
+  delegate_to: localhost
+
+- name: Create new system user
+  ansible.builtin.user:
+    user: "{{ sudo_username }}"
+    shell: "{{ sudo_shell }}"
+    create_home: true
+    state: present
+  become: true
+
+- name: Authorize the ansible key
+  ansible.posix.authorized_key:
+    user: "{{ sudo_username }}"
+    key: "{{ lookup('file', ansible_pubkey_file) }}"
+    state: present
+  become: true
+
+- name: Configure passwordless sudo privileges
+  ansible.builtin.copy:
+    content: "{{ sudo_username }} ALL=(ALL) NOPASSWD: ALL\n"
+    dest: "/etc/sudoers.d/{{ sudo_username }}"
+    owner: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  become: true
