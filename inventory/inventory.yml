@@ -4,3 +4,7 @@ all:
     domainesia:
       hosts:
         domainesia-devops:
+
+    komodo:
+      hosts:
+        domainesia-devops:

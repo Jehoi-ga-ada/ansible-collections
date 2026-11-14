@@ -1,0 +1,9 @@
+---
+komodo_domain: "komodo.example.com"  # TODO: set real domain
+komodo_admin_username: "admin"
+
+# Secrets — define these in inventory/group_vars/komodo/vault.yml (ansible-vault):
+# vault_komodo_db_password
+# vault_komodo_admin_password
+# vault_komodo_webhook_secret
+# vault_komodo_jwt_secret
