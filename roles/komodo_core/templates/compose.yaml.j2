@@ -10,7 +10,7 @@ name: komodo
 
 services:
   mongo:
-    image: mongo
+    image: mongo:7.0
     labels:
       komodo.skip: # Prevent Komodo from stopping with StopAllContainers
     command: --quiet --wiredTigerCacheSizeGB 0.25
@@ -30,8 +30,17 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo
-    ports:
-      - 9120:9120
+    networks:
+      - default
+      - proxy
+    labels:
+      caddy: {{ komodo_domain }}
+      caddy.reverse_proxy: "{% raw %}{{upstreams 9120}}{% endraw %}"
+      caddy.import: tailnet_only
+      dockroute.enabled: "true"
+      dockroute.hostname: {{ komodo_domain }}
+      dockroute.target: "{{ tailscale_ipv4 }}"
+      dockroute.cloudflare.proxied: "false"
     env_file: ./compose.env
     environment:
       KOMODO_DATABASE_ADDRESS: mongo:27017
@@ -81,3 +90,7 @@ volumes:
   mongo-config:
   # Core / Periphery
   keys:
+
+networks:
+  proxy:
+    external: true

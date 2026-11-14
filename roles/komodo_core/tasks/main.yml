@@ -1,0 +1,30 @@
+---
+- name: Create Komodo directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+  loop:
+    - "{{ komodo_dir }}"
+    - /etc/komodo
+    - /etc/komodo/backups
+
+- name: Template Komodo compose file
+  ansible.builtin.template:
+    src: compose.yaml.j2
+    dest: "{{ komodo_dir }}/compose.yaml"
+    mode: "0644"
+
+- name: Template Komodo env file
+  ansible.builtin.template:
+    src: compose.env.j2
+    dest: "{{ komodo_dir }}/compose.env"
+    mode: "0600"
+  no_log: true
+
+- name: Start Komodo stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ komodo_dir }}"
+    env_files:
+      - "{{ komodo_dir }}/compose.env"
+    state: present

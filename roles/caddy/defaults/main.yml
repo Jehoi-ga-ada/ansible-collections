@@ -1,0 +1,12 @@
+---
+caddy_dir: /opt/caddy
+caddy_image: "{{ vault_dockerhub_username }}/caddy-docker-proxy:2.11"
+caddy_acme_email: ""
+caddy_cloudflare_token: "{{ vault_cloudflare_dns_token }}"
+caddy_socket_proxy_image: tecnativa/docker-socket-proxy:v0.4.1
+
+dockroute_image: ghcr.io/dockroute/dockroute:0.8.0
+dockroute_provider: cloudflare
+dockroute_policy: upsert-only
+dockroute_domain_filter: fronesis.id
+dockroute_default_target: "{{ ansible_default_ipv4.address }}"

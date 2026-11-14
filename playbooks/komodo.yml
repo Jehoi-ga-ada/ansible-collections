@@ -1,0 +1,28 @@
+---
+- name: Setup Komodo host
+  hosts: komodo
+  become: true
+
+  pre_tasks:
+    - name: Read Tailscale IPv4
+      ansible.builtin.command: tailscale ip -4
+      register: tailscale_ip_result
+      changed_when: false
+
+    - name: Set Tailscale IPv4 fact
+      ansible.builtin.set_fact:
+        tailscale_ipv4: "{{ tailscale_ip_result.stdout_lines[0] }}"
+
+  roles:
+    - role: geerlingguy.docker
+      vars:
+        docker_daemon_options:
+          userland-proxy: false
+          log-driver: json-file
+          log-opts:
+            max-size: "10m"
+            max-file: "3"
+    - role: docker_host
+    - role: firewall
+    - role: caddy
+    - role: komodo_core

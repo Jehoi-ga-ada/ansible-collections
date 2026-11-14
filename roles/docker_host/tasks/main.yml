@@ -1,0 +1,9 @@
+---
+- name: Install python requests
+  ansible.builtin.apt:
+    name: python3-requests
+    state: present
+
+- name: Create proxy network
+  community.docker.docker_network:
+    name: proxy

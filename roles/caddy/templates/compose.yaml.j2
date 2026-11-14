@@ -1,0 +1,63 @@
+name: caddy
+
+services:
+  socket-proxy:
+    image: {{ caddy_socket_proxy_image }}
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1
+      NETWORKS: 1
+      INFO: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - socket
+
+  caddy:
+    image: {{ caddy_image }}
+    restart: unless-stopped
+    depends_on:
+      - socket-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOCKER_HOST: tcp://socket-proxy:2375
+      CADDY_INGRESS_NETWORKS: proxy
+      CF_API_TOKEN: "{{ caddy_cloudflare_token }}"
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - proxy
+      - socket
+    labels:
+      caddy.email: "{{ caddy_acme_email }}"
+      caddy.acme_dns: "cloudflare {env.CF_API_TOKEN}"
+      caddy_0: "(tailnet_only)"
+      caddy_0.@outside: "not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48"
+      caddy_0.respond: "@outside 403"
+
+  dockroute:
+    image: {{ dockroute_image }}
+    restart: unless-stopped
+    environment:
+      DOCKROUTE_PROVIDER: {{ dockroute_provider }}
+      DOCKROUTE_POLICY: {{ dockroute_policy }}
+      DOCKROUTE_OWNER_ID: {{ inventory_hostname }}
+      DOCKROUTE_DOMAIN_FILTER: {{ dockroute_domain_filter }}
+      DOCKROUTE_DEFAULT_TARGET: {{ dockroute_default_target }}
+      CLOUDFLARE_API_TOKEN: "{{ caddy_cloudflare_token }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+  caddy-data:
+  caddy-config:
+
+networks:
+  proxy:
+    external: true
+  socket:
+    internal: true
