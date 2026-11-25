@@ -2,5 +2,6 @@
 komodo_db_username: "komodo"
 komodo_admin_username: "admin"
 komodo_domain: "komodo.int.fronesis.id"
+komodo_hooks_domain: "komodo-hooks.fronesis.id"
 komodo_hostname: "{{ inventory_hostname }}"
 komodo_dir: /opt/komodo

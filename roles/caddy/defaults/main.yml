@@ -1,6 +1,6 @@
 ---
 caddy_dir: /opt/caddy
-caddy_image: "{{ vault_dockerhub_username }}/caddy-docker-proxy:2.11"
+caddy_image: "hushmintsky/caddy-docker-proxy:2.11"
 caddy_acme_email: ""
 caddy_cloudflare_token: "{{ vault_cloudflare_dns_token }}"
 caddy_socket_proxy_image: tecnativa/docker-socket-proxy:v0.4.1
