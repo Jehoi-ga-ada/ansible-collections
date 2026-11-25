@@ -1,0 +1,6 @@
+---
+- name: Add swap
+  hosts: domainesia
+  become: true
+  roles:
+    - role: swap
