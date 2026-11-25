@@ -45,6 +45,7 @@ services:
     environment:
       DOCKROUTE_PROVIDER: {{ dockroute_provider }}
       DOCKROUTE_POLICY: {{ dockroute_policy }}
+      DOCKROUTE_DELETE_GRACE_SECONDS: "{{ dockroute_delete_grace_seconds }}"
       DOCKROUTE_OWNER_ID: {{ inventory_hostname }}
       DOCKROUTE_DOMAIN_FILTER: {{ dockroute_domain_filter }}
       DOCKROUTE_DEFAULT_TARGET: {{ dockroute_default_target }}
